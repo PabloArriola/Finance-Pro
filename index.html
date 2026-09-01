@@ -173,7 +173,7 @@
         // --- 1. CONFIGURACIÓN (REEMPLAZAR AQUÍ) ---
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfyc...TU_URL_REAL.../exec";
 const API_KEY = "PabloFinanzas2024_XyZ9!"; // La misma que pusiste en el .gs
-const MI_CORREO = "arriolapablo.a@gmail.com"; 
+const CORREOS_PERMITIDOS = ["Arriolapablo.a@gmail.com", "agusferrari94@gmail.com"]; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyBi8Mf5FWib1d-gvTIkXiQhB8cEC18TVrk",
@@ -200,21 +200,19 @@ const firebaseConfig = {
         ];
 
         // --- 3. AUTENTICACIÓN ---
-        function login() { auth.signInWithPopup(provider); }
-        function logout() { auth.signOut(); location.reload(); }
-
         auth.onAuthStateChanged(user => {
-            if (user && user.email === MI_CORREO) {
+            // Verificamos si el usuario existe y si su correo está en la lista de permitidos
+            if (user && CORREOS_PERMITIDOS.includes(user.email)) {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
                 document.getElementById('user-welcome').textContent = `Hola, ${user.displayName.split(' ')[0]}`;
                 init();
             } else if (user) {
-                alert("Acceso denegado. Solo el propietario puede entrar.");
+                // Si el usuario se loguea pero no está en la lista, lo rechazamos
+                alert("Acceso denegado. No tienes permisos para ver estas finanzas.");
                 auth.signOut();
             }
         });
-
         // --- 4. BACKEND ENGINE (JSONP) ---
         async function api(action, payload = {}) {
             document.getElementById('loading').style.display = 'block';
