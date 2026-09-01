@@ -204,14 +204,14 @@ const firebaseConfig = {
         function logout() { auth.signOut(); location.reload(); }
 
         auth.onAuthStateChanged(user => {
-            // Validamos que el usuario exista y que su correo esté en la lista
             if (user && CORREOS_PERMITIDOS.includes(user.email)) {
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
                 document.getElementById('user-welcome').textContent = `Hola, ${user.displayName.split(' ')[0]}`;
                 init();
             } else if (user) {
-                alert("Acceso denegado. No tienes permisos para ver estas finanzas.");
+                // ESTA LÍNEA ES LA MAGIA: Nos dirá exactamente qué correo intentó entrar
+                alert("Acceso denegado para el correo: [" + user.email + "]. Asegúrate de que esté en la lista.");
                 auth.signOut();
             }
         });
